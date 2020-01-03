@@ -53,6 +53,7 @@ public class DesignTacoController {
         }
         System.out.println(design);
         Taco saved = designRepo.save(design);
+        order.addDesign(saved);
         log.info("Processing design");
         //It will redirect to localhost:8080/orders/current url
         return "redirect:/orders/current";
