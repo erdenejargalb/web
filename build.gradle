@@ -27,6 +27,11 @@ dependencies {
 	}
 	compileOnly 'org.projectlombok:lombok:1.18.10'
 	annotationProcessor 'org.projectlombok:lombok:1.18.10'
+	// https://mvnrepository.com/artifact/com.h2database/h2
+	runtime group: 'com.h2database', name: 'h2', version: '1.4.200'
+	// https://mvnrepository.com/artifact/org.springframework/spring-jdbc
+	compile group: 'org.springframework', name: 'spring-jdbc', version: '5.2.2.RELEASE'
+
 
 }
 

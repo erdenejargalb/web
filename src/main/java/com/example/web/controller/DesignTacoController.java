@@ -1,32 +1,58 @@
 package com.example.web.controller;
 
+import com.example.web.data.IngredientRepository;
+import com.example.web.data.TacoRepository;
 import com.example.web.model.Ingredient;
+import com.example.web.model.Order;
+import com.example.web.model.Taco;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
+import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
 @RestController
 @RequestMapping("/design")
 public class DesignTacoController {
+
+    @ModelAttribute(name = "order")
+    public Order order(){
+        return new Order();
+    }
+
+    @ModelAttribute(name = "taco")
+    public Taco taco(){
+        return new Taco();
+    }
+
+    private final IngredientRepository ingredientRepo;
+    private TacoRepository designRepo;
+
+    @Autowired
+    public DesignTacoController(IngredientRepository ingredientRepo, TacoRepository designRepo){
+        this.ingredientRepo = ingredientRepo;
+        this.designRepo = designRepo;
+    }
     @GetMapping
     public List<Ingredient> showDesign(){
-        List<Ingredient> ingredients = Arrays.asList(
-                new Ingredient("FLTO","Flour Tortilla", Ingredient.Type.WRAP),
-                new Ingredient("COTO","Corn Tortilla", Ingredient.Type.PROTEIN),
-                new Ingredient("LETC","Lettuce", Ingredient.Type.SAUCE),
-                new Ingredient("SLSA","Salsa", Ingredient.Type.VEGGIES)
-        );
+        List<Ingredient> ingredients = new ArrayList<>();
+        ingredientRepo.findAll().forEach(ingredients::add); // i -> ingredients.add(i) replaced by reference method, both work fine
         return ingredients;
     }
 
     @PostMapping
-    public String processDesign(){
+    public String processDesign(
+            @RequestBody @Valid Taco design, Errors errors,
+            @ModelAttribute Order order){
+        if(errors.hasErrors()){
+            return "taco validation error: " + errors.toString();
+        }
+        System.out.println(design);
+        Taco saved = designRepo.save(design);
         log.info("Processing design");
         //It will redirect to localhost:8080/orders/current url
         return "redirect:/orders/current";
