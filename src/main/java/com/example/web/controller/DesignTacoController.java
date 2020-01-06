@@ -30,7 +30,7 @@ public class DesignTacoController {
     }
 
     private final IngredientRepository ingredientRepo;
-    private TacoRepository designRepo;
+    private final TacoRepository designRepo;
 
     @Autowired
     public DesignTacoController(IngredientRepository ingredientRepo, TacoRepository designRepo){
@@ -51,9 +51,8 @@ public class DesignTacoController {
         if(errors.hasErrors()){
             return "taco validation error: " + errors.toString();
         }
-        System.out.println(design);
         Taco saved = designRepo.save(design);
-        //order.addDesign(saved);
+        order.addDesign(saved);
         log.info("Processing design");
         //It will redirect to localhost:8080/orders/current url
         return "redirect:/orders/current";
